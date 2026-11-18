@@ -1,6 +1,6 @@
 // Guarda la app en el móvil para que funcione sin conexión.
 // Al publicar una versión nueva, cambia el número de CACHE para que se actualice.
-const CACHE = 'diaadia-v1.0';
+const CACHE = 'diaadia-v1.1';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
 
 self.addEventListener('install', e => {
