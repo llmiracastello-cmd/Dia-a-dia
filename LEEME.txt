@@ -1,0 +1,60 @@
+DÍA A DÍA · APP PARA EL MÓVIL (ANDROID)
+=======================================
+
+Mini-app para anotar en clase los positivos, negativos, faltas y observaciones
+del «Día a día» y pasarlos después a la app «Evaluación por competencias» del ordenador.
+Funciona sin conexión y los datos se guardan solo en el móvil.
+
+¿QUÉ HAY QUE HACER UNA SOLA VEZ? → PONERLA EN UNA DIRECCIÓN WEB (HTTPS)
+Android solo deja instalar una app web si se abre desde una dirección https://.
+Lo más sencillo y gratis es GitHub Pages (unos 10 minutos):
+1. Crea una cuenta en https://github.com (si no la tienes).
+2. Pulsa «New repository». Nombre, por ejemplo: diaadia. Márcalo como «Public» y pulsa «Create repository».
+3. Pulsa «uploading an existing file» y arrastra TODOS los archivos de esta carpeta
+   (index.html, sw.js, manifest.webmanifest y los tres icon-*.png). Pulsa «Commit changes».
+4. Ve a «Settings» > «Pages». En «Branch» elige «main» y pulsa «Save».
+5. En un minuto o dos tendrás la dirección: https://TU-USUARIO.github.io/diaadia/
+Importante: en GitHub solo está el programa, vacío. Los nombres del alumnado y las anotaciones
+NO se suben a internet: se quedan dentro del móvil.
+
+INSTALAR EN EL MÓVIL
+1. Abre esa dirección en Chrome en el Android.
+2. Menú ⋮ > «Instalar aplicación» (o «Añadir a pantalla de inicio»).
+3. Aparece el icono «Día a día». A partir de ahí se abre como una app y funciona sin conexión.
+
+CARGAR TUS CLASES (al principio y cuando haya altas o bajas)
+1. En el ordenador: app > «Datos y ayuda» > «Descargar copia (.json)».
+2. Pasa ese archivo al móvil (Drive, OneDrive, correo, WhatsApp…).
+3. En el móvil: «Cargar mis clases» (o «Ajustes» > «Actualizar clases») y elige el archivo.
+   Se cargan los grupos, el alumnado y tu horario de «Temporalización»:
+   cada día aparecen primero los grupos que tienes ese día, con su hora.
+   Al actualizar las clases no se pierde ninguna anotación.
+
+ANOTAR EN CLASE
+- Toca ＋ o − en Trabajo, Deberes o Comportamiento. Mantén pulsado para quitar uno.
+- 🚫 marca la falta de asistencia (ese día no cuenta, igual que en el ordenador).
+- Toca el nombre para escribir una observación o vaciar una casilla.
+- «Toda la clase» pone ＋ o − a quien asiste y aún no tiene nada en esa columna.
+- «Deshacer» deshace el último toque.
+- Con las flechas ‹ › cambias de día.
+
+PASAR LAS ANOTACIONES AL ORDENADOR (por ejemplo, una vez por semana)
+1. En el móvil: pestaña «Enviar» > «Enviar archivo». Se abre el menú de compartir:
+   mándatelo por Drive, correo, WhatsApp…
+   (La fecha «Desde» propone el día de tu último envío; repetir días no es problema.)
+2. En el ordenador: app > «Día a día» > «📥 Importar» y elige el archivo.
+3. Si avisa de conflictos, elige «Usar lo del archivo».
+REGLA DE ORO: anota el Día a día solo en el móvil. Así nunca hay conflictos.
+Si llevas 7 días o más sin enviar, la app te lo recuerda.
+
+CAMBIO DE MÓVIL O COPIA DE SEGURIDAD
+«Ajustes» > «Copia completa» genera un archivo con todas las anotaciones.
+En el móvil nuevo: carga tus clases y después «Recuperar anotaciones de un archivo».
+
+PUBLICAR UNA VERSIÓN NUEVA DE LA APP
+Sube los archivos nuevos al mismo repositorio de GitHub y cambia el número de CACHE en sw.js
+(por ejemplo, de 'diaadia-v1.0' a 'diaadia-v1.1'). Los datos del móvil se conservan.
+No cambies la dirección web: los datos van ligados a ella.
+
+IDIOMA
+Botones ES / VA arriba a la derecha, o en «Ajustes».

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#14b8b0">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Día a día</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--acc:#14b8b0;--acc2:#0a8f89;--bg:#f3f6f7;--card:#fff;--fg:#1b2428;--mut:#6b7a80;--bd:#dde4e7;--ok:#11a35a;--okb:#e4f7ec;--bad:#d2402f;--badb:#fde9e6;--abs:#f1f1f1;--sh:0 1px 3px rgba(0,0,0,.08)}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1517;--card:#1a2327;--fg:#e8eef0;--mut:#93a3a9;--bd:#2c393e;--okb:#12321f;--badb:#3a1a16;--abs:#232b2e;--sh:none}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input,textarea,select{font:inherit;color:var(--fg);background:var(--card);border:1px solid var(--bd);border-radius:10px;padding:10px;width:100%}
+header{position:sticky;top:0;z-index:5;background:var(--acc);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+header .row{display:flex;align-items:center;gap:8px}
+header h1{font-size:18px;margin:0;flex:1}
+.lang button{color:#fff;opacity:.7;font-size:13px;padding:4px 6px;border-radius:6px}.lang button.on{opacity:1;background:rgba(255,255,255,.22)}
+.datebar{display:flex;align-items:center;gap:6px;margin-top:8px}
+.datebar .arr{background:rgba(255,255,255,.2);color:#fff;width:40px;height:40px;border-radius:10px;font-size:20px}
+.datebar label{flex:1;position:relative;background:rgba(255,255,255,.2);border-radius:10px;height:40px;display:flex;align-items:center;justify-content:center;font-weight:600}
+.datebar label input{position:absolute;inset:0;opacity:0;width:100%;height:100%;padding:0}
+.datebar .today{background:#fff;color:var(--acc2);height:40px;padding:0 10px;border-radius:10px;font-weight:600;font-size:14px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 12px 4px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:8px 12px;border-radius:20px;background:var(--card);border:1px solid var(--bd);font-weight:600;font-size:15px;box-shadow:var(--sh);position:relative}
+.chip small{display:block;font-weight:400;font-size:11px;color:var(--mut)}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}.chip.on small{color:#e6fffd}
+.chip .dot{position:absolute;top:5px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.chip.sep{background:none;border:0;box-shadow:none;color:var(--mut);font-weight:400;padding:8px 2px}
+main{padding:6px 10px}
+.tools{display:flex;gap:6px;align-items:center;margin:4px 2px 8px;flex-wrap:wrap}
+.tools .sum{flex:1;color:var(--mut);font-size:13px;min-width:120px}
+.tb{background:var(--card);border:1px solid var(--bd);padding:8px 10px;border-radius:10px;font-size:14px;box-shadow:var(--sh)}
+.tb:disabled{opacity:.4}
+.stu{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:8px 8px 8px 10px;margin-bottom:8px;box-shadow:var(--sh)}
+.stu .top{display:flex;align-items:center;gap:6px}
+.stu .nm{flex:1;text-align:left;font-weight:600;padding:4px 0;min-height:36px;overflow:hidden;text-overflow:ellipsis}
+.stu .nm .nt{font-weight:400;color:var(--mut);font-size:13px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ab{width:44px;height:36px;border-radius:10px;border:1px solid var(--bd);font-size:17px;filter:grayscale(1);opacity:.55}
+.ab.on{filter:none;opacity:1;background:var(--badb);border-color:var(--bad)}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.col{display:flex;flex-direction:column;align-items:stretch;gap:3px}
+.col .lb{font-size:11px;color:var(--mut);text-align:center;white-space:nowrap;overflow:hidden}
+.col .bs{display:flex;gap:4px}
+.b{flex:1;height:48px;border-radius:12px;font-size:22px;font-weight:700;border:1.5px solid var(--bd);display:flex;align-items:center;justify-content:center;gap:2px;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.b b{font-size:17px}
+.b.p{color:var(--ok)}.b.n{color:var(--bad)}
+.b.p.has{background:var(--okb);border-color:var(--ok)}.b.n.has{background:var(--badb);border-color:var(--bad)}
+.b:active{transform:scale(.94)}
+.stu.abs{background:var(--abs)}.stu.abs .nm{color:var(--mut);text-decoration:line-through}
+.stu.abs .cols{display:none}
+.abtxt{display:none;color:var(--bad);font-size:13px;margin-top:2px}.stu.abs .abtxt{display:block}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:var(--sh)}
+.card h2{font-size:17px;margin:0 0 8px}
+.mut{color:var(--mut);font-size:14px}
+.btn{display:block;width:100%;background:var(--acc);color:#fff;font-weight:700;padding:14px;border-radius:12px;font-size:17px;margin-top:10px}
+.btn.sec{background:var(--card);color:var(--fg);border:1px solid var(--bd)}
+.btn.dang{background:var(--card);color:var(--bad);border:1px solid var(--bad)}
+.warn{background:#fff6dd;color:#6b4e00;border:1px solid #f1d48a;border-radius:12px;padding:10px 12px;margin:0 2px 10px;font-size:14px}
+@media (prefers-color-scheme:dark){.warn{background:#3a2f10;color:#f3dc9b;border-color:#6b5520}}
+ol,ul{padding-left:20px;margin:6px 0}li{margin:3px 0}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:6;display:flex;background:var(--card);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;padding:8px 0 10px;font-size:12px;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:1px}
+nav button span{font-size:22px}nav button.on{color:var(--acc2);font-weight:700}
+nav button .bd{position:absolute;margin-left:22px;margin-top:-2px;width:9px;height:9px;border-radius:50%;background:var(--bad)}
+#ov{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:20;display:none;align-items:flex-end}
+#ov.on{display:flex}
+#sh{background:var(--card);width:100%;max-height:88vh;overflow:auto;border-radius:18px 18px 0 0;padding:16px 14px calc(16px + env(safe-area-inset-bottom))}
+#sh h3{margin:0 0 10px;font-size:18px}
+.drow{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bd)}
+.drow .l{flex:1}
+.drow .b{flex:none;width:56px;height:44px}
+.drow .rs{width:44px;height:44px;border-radius:12px;border:1px solid var(--bd);font-size:18px}
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#263238;color:#fff;padding:10px 16px;border-radius:22px;font-size:14px;z-index:30;opacity:0;transition:opacity .2s;pointer-events:none;max-width:92vw;text-align:center}
+#toast.on{opacity:1}
+.empty{text-align:center;padding:30px 16px}
+.empty .big{font-size:52px}
+.glist div{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd)}
+</style>
+</head>
+<body>
+<header>
+  <div class="row"><h1 id="ttl">📓 Día a día</h1><div class="lang"><button id="l-es" onclick="setLang('es')">ES</button><button id="l-va" onclick="setLang('va')">VA</button></div></div>
+  <div id="hdx"></div>
+</header>
+<div id="chips"></div>
+<main id="main"></main>
+<nav id="nav"></nav>
+<div id="ov" onclick="if(event.target===this)closeSheet()"><div id="sh"></div></div>
+<div id="toast"></div>
+<input type="file" id="fimp" accept=".json,application/json" hidden onchange="importFile(this.files[0]);this.value=''">
+<script>
+'use strict';
+const VERSION = '1.0';
+const KEY = 'evalcomp_movil_v1';
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+/* ===== Textos (castellano / valencià) ===== */
+const TX = {
+  es: {
+    title: '📓 Día a día', tClase: 'Clase', tEnviar: 'Enviar', tAjustes: 'Ajustes', today: 'Hoy',
+    cols: { t: '📚 Trabajo', d: '🏠 Deberes', c: '🙂 Comport.' },
+    colsL: { t: '📚 Trabajo en clase', d: '🏠 Deberes', c: '🙂 Comportamiento' },
+    noGroupsT: 'Todavía no hay clases', noGroups: 'Carga tus grupos y alumnado desde la app del ordenador.',
+    loadBtn: '📂 Cargar mis clases', howLoad: '<ol><li>En el ordenador abre la app y ve a <b>Datos y ayuda → Descargar copia (.json)</b>.</li><li>Pasa ese archivo al móvil (Drive, OneDrive, correo, WhatsApp…).</li><li>Aquí pulsa <b>Cargar mis clases</b> y elígelo.</li></ol>',
+    todayHas: 'Hoy', others: 'Otros:', attend: 'Asisten {0}', absent: 'faltan {0}', noRec: 'Sin anotaciones este día',
+    undo: '↶ Deshacer', all: '👥 Toda la clase', absTxt: 'Falta de asistencia: ese día no cuenta',
+    hint: 'Toca ＋ o − para anotar. Mantén pulsado para quitar uno. Toca el nombre para más opciones.',
+    allT: 'Toda la clase · {0}', allP: '＋ a todos', allN: '− a todos', allR: '↺ Vaciar',
+    allNote: '«A todos» solo se pone a quien asiste y aún no tiene nada en esa columna.',
+    allDone: '{0} a {1} alumnos/as. Corrige a quien no corresponda.', allNone: 'Todos los que asisten ya tenían algo en esta columna',
+    confClear: '¿Vaciar «{0}» para toda la clase este día?', cleared: 'Columna vaciada', empty: 'Esta columna ya está vacía',
+    absent1: '🚫 Falta de asistencia', note: 'Observación', notePh: 'Escribe una observación (opcional)', close: 'Cerrar', reset: 'Vaciar',
+    undone: 'Deshecho', nothingUndo: 'No hay nada que deshacer',
+    pendWarn: 'Tienes anotaciones sin enviar al ordenador desde hace {0} días.', pendGo: 'Enviar ahora',
+    sendT: '📤 Enviar al ordenador', sendD: 'Genera un archivo con tus anotaciones. Se abrirá el menú de compartir del móvil para mandarlo por Drive, correo, WhatsApp…',
+    since: 'Desde la fecha (vacío = todo)', sinceHint: 'Se propone el día de tu último envío ({0}). Repetir días no es problema: al importarlo, lo que ya estaba igual se ignora.',
+    sendBtn: '📤 Enviar archivo', pending: 'Pendiente: {0} anotaciones nuevas o cambiadas desde el último envío.', upToDate: 'Todo enviado. Último envío: {0}.', neverSent: 'Aún no has enviado nada.',
+    pcT: '💻 En el ordenador', pcSteps: '<ol><li>Abre la app y ve a <b>📓 Día a día</b>.</li><li>Pulsa <b>📥 Importar</b> y elige el archivo.</li><li>Si avisa de <b>conflictos</b>, elige <b>«Usar lo del archivo»</b>: el móvil es donde anotas el día a día.</li></ol>',
+    noRecs: 'No hay anotaciones desde esa fecha', shared: 'Archivo compartido', downloaded: 'Archivo «{0}» descargado',
+    classesT: '👥 Mis clases', loadedOn: 'Cargadas el {0}.', reloadBtn: '🔄 Actualizar clases', reloadD: 'Si das de alta o de baja a alguien en el ordenador, vuelve a cargar la copia. Tus anotaciones no se pierden.',
+    stud: '{0} alumnos/as', langT: '🌐 Idioma', dataT: '💾 Datos del móvil',
+    dataD: 'Tus anotaciones se guardan solo en este móvil, no en internet. Bloquea el móvil con PIN o huella. Si cambias de móvil, envía antes una copia completa.',
+    fullBtn: '📦 Copia completa (todas las anotaciones)', restoreBtn: '📥 Recuperar anotaciones de un archivo', wipeBtn: '🗑 Borrar todo del móvil',
+    wipeConf: 'Se borrarán las clases y TODAS las anotaciones de este móvil. ¿Seguro? Escribe BORRAR para confirmar.', wiped: 'Datos borrados',
+    loaded: 'Cargados {0} grupos y {1} alumnos/as', merged: 'Recuperadas {0} anotaciones ({1} ya estaban)', badFile: 'Este archivo no es una copia de la app ni una exportación del Día a día',
+    saveErr: 'No se pudo guardar en el móvil. Envía una copia completa.', noStu: 'Este grupo no tiene alumnado', ver: 'Versión {0}',
+    weekend: 'Fin de semana', install: '📲 Instalar en el móvil', installD: 'En Chrome: menú ⋮ → «Añadir a pantalla de inicio» o «Instalar aplicación».',
+    days: ['D', 'L', 'M', 'X', 'J', 'V', 'S'], loc: 'es-ES'
+  },
+  va: {
+    title: '📓 Dia a dia', tClase: 'Classe', tEnviar: 'Enviar', tAjustes: 'Ajustos', today: 'Hui',
+    cols: { t: '📚 Treball', d: '🏠 Deures', c: '🙂 Comport.' },
+    colsL: { t: '📚 Treball en classe', d: '🏠 Deures', c: '🙂 Comportament' },
+    noGroupsT: 'Encara no hi ha classes', noGroups: 'Carrega els teus grups i l’alumnat des de l’app de l’ordinador.',
+    loadBtn: '📂 Carregar les meues classes', howLoad: '<ol><li>A l’ordinador obri l’app i ves a <b>Dades i ajuda → Descarregar còpia (.json)</b>.</li><li>Passa eixe arxiu al mòbil (Drive, OneDrive, correu, WhatsApp…).</li><li>Ací prem <b>Carregar les meues classes</b> i tria’l.</li></ol>',
+    todayHas: 'Hui', others: 'Altres:', attend: 'Assistixen {0}', absent: 'falten {0}', noRec: 'Sense anotacions este dia',
+    undo: '↶ Desfer', all: '👥 Tota la classe', absTxt: 'Falta d’assistència: eixe dia no compta',
+    hint: 'Toca ＋ o − per a anotar. Mantín premut per a llevar-ne un. Toca el nom per a més opcions.',
+    allT: 'Tota la classe · {0}', allP: '＋ a tots', allN: '− a tots', allR: '↺ Buidar',
+    allNote: '«A tots» només es posa a qui assistix i encara no té res en eixa columna.',
+    allDone: '{0} a {1} alumnes. Corregix a qui no corresponga.', allNone: 'Tots els que assistixen ja tenien alguna cosa en esta columna',
+    confClear: 'Buidar «{0}» per a tota la classe este dia?', cleared: 'Columna buidada', empty: 'Esta columna ja està buida',
+    absent1: '🚫 Falta d’assistència', note: 'Observació', notePh: 'Escriu una observació (opcional)', close: 'Tancar', reset: 'Buidar',
+    undone: 'Desfet', nothingUndo: 'No hi ha res per desfer',
+    pendWarn: 'Tens anotacions sense enviar a l’ordinador des de fa {0} dies.', pendGo: 'Enviar ara',
+    sendT: '📤 Enviar a l’ordinador', sendD: 'Genera un arxiu amb les teues anotacions. S’obrirà el menú de compartir del mòbil per a enviar-lo per Drive, correu, WhatsApp…',
+    since: 'Des de la data (buit = tot)', sinceHint: 'Es proposa el dia del teu últim enviament ({0}). Repetir dies no és cap problema: en importar-lo, el que ja estava igual s’ignora.',
+    sendBtn: '📤 Enviar arxiu', pending: 'Pendent: {0} anotacions noves o canviades des de l’últim enviament.', upToDate: 'Tot enviat. Últim enviament: {0}.', neverSent: 'Encara no has enviat res.',
+    pcT: '💻 A l’ordinador', pcSteps: '<ol><li>Obri l’app i ves a <b>📓 Dia a dia</b>.</li><li>Prem <b>📥 Importar</b> i tria l’arxiu.</li><li>Si avisa de <b>conflictes</b>, tria <b>«Usar el de l’arxiu»</b>: el mòbil és on anotes el dia a dia.</li></ol>',
+    noRecs: 'No hi ha anotacions des d’eixa data', shared: 'Arxiu compartit', downloaded: 'Arxiu «{0}» descarregat',
+    classesT: '👥 Les meues classes', loadedOn: 'Carregades el {0}.', reloadBtn: '🔄 Actualitzar classes', reloadD: 'Si dones d’alta o de baixa algú a l’ordinador, torna a carregar la còpia. Les teues anotacions no es perden.',
+    stud: '{0} alumnes', langT: '🌐 Idioma', dataT: '💾 Dades del mòbil',
+    dataD: 'Les teues anotacions es guarden només en este mòbil, no a internet. Bloqueja el mòbil amb PIN o empremta. Si canvies de mòbil, envia abans una còpia completa.',
+    fullBtn: '📦 Còpia completa (totes les anotacions)', restoreBtn: '📥 Recuperar anotacions d’un arxiu', wipeBtn: '🗑 Esborrar-ho tot del mòbil',
+    wipeConf: 'S’esborraran les classes i TOTES les anotacions d’este mòbil. Segur? Escriu ESBORRAR per a confirmar.', wiped: 'Dades esborrades',
+    loaded: 'Carregats {0} grups i {1} alumnes', merged: 'Recuperades {0} anotacions ({1} ja hi eren)', badFile: 'Este arxiu no és una còpia de l’app ni una exportació del Dia a dia',
+    saveErr: 'No s’ha pogut guardar en el mòbil. Envia una còpia completa.', noStu: 'Este grup no té alumnat', ver: 'Versió {0}',
+    weekend: 'Cap de setmana', install: '📲 Instal·lar en el mòbil', installD: 'En Chrome: menú ⋮ → «Afegir a la pantalla d’inici» o «Instal·lar l’aplicació».',
+    days: ['dg', 'dl', 'dt', 'dc', 'dj', 'dv', 'ds'], loc: 'ca-ES'
+  }
+};
+let L = 'es';
+const raw = k => TX[L][k] != null ? TX[L][k] : TX.es[k];
+const t = (k, ...a) => String(TX[L][k] != null ? TX[L][k] : TX.es[k]).replace(/\{(\d)\}/g, (_, i) => a[i]);
+
+/* ===== Datos ===== */
+const empty = () => ({ groups: [], horario: { slots: [], cells: {} }, diario: {}, prefs: {}, loadedAt: '', mod: '' });
+let M = load();
+function load() { try { const r = localStorage.getItem(KEY); if (r) return Object.assign(empty(), JSON.parse(r)); } catch (e) { } return empty(); }
+function save(changed) { if (changed) M.mod = new Date().toISOString(); try { localStorage.setItem(KEY, JSON.stringify(M)); } catch (e) { toast(t('saveErr')); } }
+try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) { }
+
+const isoOf = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const isoToday = () => isoOf(new Date());
+const dOf = iso => { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d); };
+const addDays = (iso, n) => { const d = dOf(iso); d.setDate(d.getDate() + n); return isoOf(d); };
+const lbl = iso => { const d = dOf(iso); return raw('days')[d.getDay()] + ' ' + String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0'); };
+const lng = iso => dOf(iso).toLocaleDateString(t('loc'), { weekday: 'long', day: 'numeric', month: 'long' });
+const COLS = ['t', 'd', 'c'];
+
+const U = { view: 'clase', date: isoToday(), gid: (M.prefs && M.prefs.gid) || null, undo: [] };
+const grp = id => M.groups.find(g => g.id === id);
+const dayRec = (gid, date) => ((M.diario[gid] || {})[date]) || null;
+const stRec = (gid, date, sid) => (dayRec(gid, date) || {})[sid] || {};
+function ensureDay(gid, date) { M.diario[gid] = M.diario[gid] || {}; return M.diario[gid][date] = M.diario[gid][date] || {}; }
+function clean(rec, sid) {
+  const st = rec[sid]; if (!st) return;
+  COLS.forEach(k => { if (st[k] && !st[k].p && !st[k].n) delete st[k]; });
+  if (!st.a) delete st.a; if (!st.o) delete st.o;
+  if (!Object.keys(st).length) delete rec[sid];
+}
+/* Grupos del día según el horario de Temporalización */
+function groupsOn(date) {
+  const dow = (dOf(date).getDay() + 6) % 7 + 1; if (dow > 5) return [];
+  const H = M.horario || {}, slots = H.slots || [], cells = H.cells || {}, out = [];
+  slots.forEach(sl => { const g = grp(cells[dow + '|' + sl.id]); if (!g) return; const o = out.find(x => x.g.id === g.id); if (o) o.s.push(sl.label); else out.push({ g, s: [sl.label] }); });
+  return out;
+}
+function pickGroup() {
+  if (U.gid && grp(U.gid)) return;
+  const tg = groupsOn(U.date); U.gid = tg.length ? tg[0].g.id : (M.groups[0] || {}).id || null;
+}
+/* ===== Deshacer ===== */
+function snap() { const r = dayRec(U.gid, U.date); U.undo.push({ gid: U.gid, date: U.date, r: r ? JSON.stringify(r) : null }); if (U.undo.length > 40) U.undo.shift(); }
+function undo() {
+  const u = U.undo.pop(); if (!u) { toast(t('nothingUndo')); return; }
+  M.diario[u.gid] = M.diario[u.gid] || {};
+  if (u.r == null) delete M.diario[u.gid][u.date]; else M.diario[u.gid][u.date] = JSON.parse(u.r);
+  U.gid = u.gid; U.date = u.date; save(true); render(); toast(t('undone'));
+}
+/* ===== Acciones ===== */
+function bump(sid, col, key, d) {
+  const cur = (stRec(U.gid, U.date, sid)[col] || {})[key] || 0;
+  if (d < 0 && !cur) return;
+  snap(); const rec = ensureDay(U.gid, U.date), st = rec[sid] = rec[sid] || {}, c = st[col] = st[col] || { p: 0, n: 0 };
+  c[key] = Math.max(0, (c[key] || 0) + d); clean(rec, sid); save(true); vib(d > 0 ? 12 : 40); refresh(sid);
+}
+function toggleAbs(sid) { snap(); const rec = ensureDay(U.gid, U.date), st = rec[sid] = rec[sid] || {}; st.a = !st.a; clean(rec, sid); save(true); vib(20); refresh(sid); }
+function resetCol(sid, col) { snap(); const rec = ensureDay(U.gid, U.date); if (rec[sid]) delete rec[sid][col]; clean(rec, sid); save(true); refresh(sid); }
+function setNote(sid, v) { const rec = ensureDay(U.gid, U.date), st = rec[sid] = rec[sid] || {}; v = v.trim(); if (v) st.o = v; else delete st.o; clean(rec, sid); save(true); }
+function allMark(col, key) {
+  const g = grp(U.gid); snap(); const rec = ensureDay(U.gid, U.date); let n = 0;
+  g.students.forEach(s => { const st = rec[s.id] = rec[s.id] || {}; if (st.a || (st[col] && (st[col].p || st[col].n))) { clean(rec, s.id); return; } st[col] = { p: 0, n: 0 }; st[col][key] = 1; n++; });
+  if (!n) U.undo.pop(); save(true); closeSheet(); render(); toast(n ? t('allDone', key === 'p' ? '＋' : '−', n) : t('allNone'));
+}
+function allReset(col) {
+  const g = grp(U.gid), rec = dayRec(U.gid, U.date) || {}, ids = g.students.filter(s => rec[s.id] && rec[s.id][col]).map(s => s.id);
+  if (!ids.length) { toast(t('empty')); return; }
+  if (!confirm(t('confClear', TX[L].colsL[col]))) return;
+  snap(); ids.forEach(id => { delete rec[id][col]; clean(rec, id); }); save(true); closeSheet(); render(); toast(t('cleared'));
+}
+const vib = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) { } };
+
+/* ===== Vistas ===== */
+function render() {
+  document.documentElement.lang = L === 'va' ? 'ca' : 'es';
+  $('ttl').textContent = t('title'); $('l-es').className = L === 'es' ? 'on' : ''; $('l-va').className = L === 'va' ? 'on' : '';
+  const pend = pendingCount();
+  $('nav').innerHTML = [['clase', '📓', t('tClase')], ['enviar', '📤', t('tEnviar')], ['ajustes', '⚙️', t('tAjustes')]].map(([k, i, l]) => `<button class="${U.view === k ? 'on' : ''}" onclick="go('${k}')"><span>${i}</span>${k === 'enviar' && pend ? '<i class="bd"></i>' : ''}${esc(l)}</button>`).join('');
+  $('hdx').innerHTML = ''; $('chips').innerHTML = '';
+  ({ clase: vClase, enviar: vEnviar, ajustes: vAjustes })[U.view]();
+  scrollTo(0, U.keepScroll || 0); U.keepScroll = 0;
+}
+function go(v) { U.view = v; render(); }
+
+function vClase() {
+  if (!M.groups.length) {
+    $('main').innerHTML = `<div class="card empty"><div class="big">👋</div><h2>${t('noGroupsT')}</h2><p class="mut">${t('noGroups')}</p><div style="text-align:left">${t('howLoad')}</div><button class="btn" onclick="$('fimp').click()">${t('loadBtn')}</button></div>`;
+    return;
+  }
+  pickGroup();
+  const isT = U.date === isoToday();
+  $('hdx').innerHTML = `<div class="datebar"><button class="arr" onclick="moveDay(-1)" aria-label="‹">‹</button><label>${esc(lbl(U.date))}<input type="date" value="${U.date}" onclick="try{this.showPicker()}catch(e){}" onchange="setDate(this.value)"></label><button class="arr" onclick="moveDay(1)" aria-label="›">›</button>${isT ? '' : `<button class="today" onclick="setDate(isoToday())">${t('today')}</button>`}</div>`;
+  const tg = groupsOn(U.date), tids = tg.map(x => x.g.id), rest = M.groups.filter(g => !tids.includes(g.id));
+  const chip = (g, sub) => `<button class="chip ${g.id === U.gid ? 'on' : ''}" onclick="setGroup('${g.id}')">${dayHas(g.id, U.date) ? '<i class="dot"></i>' : ''}${esc(g.name)}${sub ? `<small>${esc(sub)}</small>` : ''}</button>`;
+  $('chips').innerHTML = `<div class="chips">${tg.map(x => chip(x.g, x.s.join(', '))).join('')}${tg.length && rest.length ? `<span class="chip sep">${t('others')}</span>` : ''}${rest.map(g => chip(g)).join('')}</div>`;
+  const g = grp(U.gid), rec = dayRec(g.id, U.date) || {};
+  const nAbs = g.students.filter(s => rec[s.id] && rec[s.id].a).length;
+  const days = pendDays();
+  $('main').innerHTML = `${days >= 7 ? `<div class="warn">⚠ ${t('pendWarn', days)} <a href="#" onclick="go('enviar');return false">${t('pendGo')}</a></div>` : ''}
+  <div class="tools"><span class="sum">${esc(lng(U.date))}<br>${g.students.length ? t('attend', g.students.length - nAbs) + (nAbs ? ' · ' + t('absent', nAbs) : '') : ''}</span>
+  <button class="tb" onclick="undo()" ${U.undo.length ? '' : 'disabled'}>${t('undo')}</button><button class="tb" onclick="allSheet()" ${g.students.length ? '' : 'disabled'}>${t('all')}</button></div>
+  <div id="list">${g.students.length ? g.students.map(s => rowHTML(g, s)).join('') : `<p class="mut">${t('noStu')}</p>`}</div>
+  <p class="mut" style="text-align:center;margin:14px 8px">${t('hint')}</p>`;
+}
+const dayHas = (gid, date) => { const r = dayRec(gid, date); return !!r && Object.keys(r).length > 0; };
+function rowHTML(g, s) {
+  const st = stRec(g.id, U.date, s.id);
+  return `<div class="stu ${st.a ? 'abs' : ''}" id="r-${s.id}"><div class="top"><button class="nm" onclick="detail('${s.id}')">${esc(s.name)}${st.o ? `<span class="nt">📝 ${esc(st.o)}</span>` : ''}</button><button class="ab ${st.a ? 'on' : ''}" onclick="toggleAbs('${s.id}')" aria-label="${esc(t('absent1'))}">🚫</button></div>
+  <div class="abtxt">${t('absTxt')}</div>
+  <div class="cols">${COLS.map(k => { const c = st[k] || {}; return `<div class="col"><span class="lb">${raw('cols')[k]}</span><div class="bs"><button class="b p ${c.p ? 'has' : ''}" data-s="${s.id}" data-c="${k}" data-k="p">＋${c.p ? `<b>${c.p}</b>` : ''}</button><button class="b n ${c.n ? 'has' : ''}" data-s="${s.id}" data-c="${k}" data-k="n">−${c.n ? `<b>${c.n}</b>` : ''}</button></div></div>`; }).join('')}</div></div>`;
+}
+function refresh(sid) {
+  if (U.view !== 'clase') return;
+  const g = grp(U.gid), s = g && g.students.find(x => x.id === sid), el = $('r-' + sid);
+  if (!s || !el || $('ov').classList.contains('on')) { U.keepScroll = scrollY; render(); if ($('ov').classList.contains('on') && U.detail) detail(U.detail); return; }
+  el.outerHTML = rowHTML(g, s);
+  const rec = dayRec(g.id, U.date) || {}, nAbs = g.students.filter(x => rec[x.id] && rec[x.id].a).length;
+  const sum = document.querySelector('.tools .sum'); if (sum) sum.innerHTML = esc(lng(U.date)) + '<br>' + t('attend', g.students.length - nAbs) + (nAbs ? ' · ' + t('absent', nAbs) : '');
+  const ub = document.querySelector('.tools .tb'); if (ub) ub.disabled = !U.undo.length;
+  const ch = document.querySelector('.chip.on'); if (ch) { const has = dayHas(g.id, U.date), dot = ch.querySelector('.dot'); if (has && !dot) ch.insertAdjacentHTML('afterbegin', '<i class="dot"></i>'); if (!has && dot) dot.remove(); }
+}
+function setDate(d) { if (!/^\d{4}-\d{2}-\d{2}$/.test(d || '')) return; const tg = groupsOn(d); U.date = d; if (tg.length && !tg.some(x => x.g.id === U.gid)) U.gid = tg[0].g.id; render(); }
+function moveDay(n) { setDate(addDays(U.date, n)); }
+function setGroup(id) { U.gid = id; M.prefs.gid = id; save(); render(); }
+
+/* Pulsación: toque = sumar; mantener pulsado = quitar uno */
+(function () {
+  let tm = null, long = false, tgt = null;
+  const clear = () => { if (tm) clearTimeout(tm); tm = null; };
+  document.addEventListener('pointerdown', e => {
+    const b = e.target.closest('.b[data-s]'); if (!b) return; tgt = b; long = false; clear();
+    tm = setTimeout(() => { long = true; tm = null; bump(b.dataset.s, b.dataset.c, b.dataset.k, -1); }, 550);
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => document.addEventListener(ev, clear));
+  document.addEventListener('scroll', clear, { passive: true });
+  document.addEventListener('click', e => {
+    const b = e.target.closest('.b[data-s]'); if (!b) return;
+    if (long) { long = false; return; }
+    bump(b.dataset.s, b.dataset.c, b.dataset.k, 1);
+  });
+  document.addEventListener('contextmenu', e => { if (e.target.closest('.b')) e.preventDefault(); });
+})();
+
+/* ===== Hojas inferiores ===== */
+function openSheet(h) { $('sh').innerHTML = h; $('ov').classList.add('on'); }
+function closeSheet() { $('ov').classList.remove('on'); U.detail = null; if (U.view === 'clase') { U.keepScroll = scrollY; render(); } }
+function detail(sid) {
+  const g = grp(U.gid), s = g.students.find(x => x.id === sid), st = stRec(g.id, U.date, sid); U.detail = sid;
+  openSheet(`<h3>${esc(s.name)}</h3><p class="mut" style="margin-top:-6px">${esc(g.name)} · ${esc(lng(U.date))}</p>
+  <div class="drow"><span class="l">${t('absent1')}</span><button class="ab ${st.a ? 'on' : ''}" style="width:56px;height:44px" onclick="toggleAbs('${sid}')">🚫</button></div>
+  ${st.a ? '' : COLS.map(k => { const c = st[k] || {}; return `<div class="drow"><span class="l">${raw('colsL')[k]}</span><button class="b p ${c.p ? 'has' : ''}" data-s="${sid}" data-c="${k}" data-k="p">＋${c.p ? `<b>${c.p}</b>` : ''}</button><button class="b n ${c.n ? 'has' : ''}" data-s="${sid}" data-c="${k}" data-k="n">−${c.n ? `<b>${c.n}</b>` : ''}</button><button class="rs" title="${t('reset')}" onclick="resetCol('${sid}','${k}')">↺</button></div>`; }).join('')}
+  <label style="display:block;margin-top:12px">${t('note')}<textarea rows="3" placeholder="${esc(t('notePh'))}" oninput="setNote('${sid}',this.value)">${esc(st.o || '')}</textarea></label>
+  <button class="btn" onclick="closeSheet()">${t('close')}</button>`);
+}
+function allSheet() {
+  const g = grp(U.gid);
+  openSheet(`<h3>${esc(t('allT', g.name))}</h3><p class="mut" style="margin-top:-6px">${esc(lng(U.date))}</p>
+  ${COLS.map(k => `<div class="drow"><span class="l">${raw('colsL')[k]}</span></div><div style="display:flex;gap:6px;margin:6px 0 4px"><button class="tb" style="flex:1;color:var(--ok)" onclick="allMark('${k}','p')">${t('allP')}</button><button class="tb" style="flex:1;color:var(--bad)" onclick="allMark('${k}','n')">${t('allN')}</button><button class="tb" style="flex:1" onclick="allReset('${k}')">${t('allR')}</button></div>`).join('')}
+  <p class="mut">${t('allNote')}</p><button class="btn sec" onclick="closeSheet()">${t('close')}</button>`);
+}
+
+/* ===== Enviar ===== */
+const pendingCount = () => (M.prefs.lastExpAt ? (M.mod > M.prefs.lastExpAt ? 1 : 0) : (Object.keys(M.diario).some(g => Object.keys(M.diario[g]).some(d => dayHas(g, d))) ? 1 : 0));
+function pendDays() {
+  if (!pendingCount()) return 0;
+  const ref = M.prefs.lastExpAt || firstRecDate(); if (!ref) return 0;
+  return Math.floor((Date.now() - dOf(ref.slice(0, 10)).getTime()) / 864e5);
+}
+function firstRecDate() { let m = ''; Object.keys(M.diario).forEach(g => Object.keys(M.diario[g]).forEach(d => { if (dayHas(g, d) && (!m || d < m)) m = d; })); return m; }
+function vEnviar() {
+  const last = M.prefs.lastExp || '';
+  const st = !M.prefs.lastExpAt ? t('neverSent') : pendingCount() ? '' : t('upToDate', new Date(M.prefs.lastExpAt).toLocaleString(t('loc'), { dateStyle: 'short', timeStyle: 'short' }));
+  $('main').innerHTML = `<div class="card"><h2>${t('sendT')}</h2><p class="mut">${t('sendD')}</p>
+  ${st ? `<p><b>${esc(st)}</b></p>` : ''}
+  <label>${t('since')}<input type="date" id="xf" value="${last}"></label>
+  ${last ? `<p class="mut" style="margin:4px 0 0">${esc(t('sinceHint', lbl(last)))}</p>` : ''}
+  <button class="btn" onclick="exportar(($('xf')||{}).value||'')">${t('sendBtn')}</button></div>
+  <div class="card"><h2>${t('pcT')}</h2>${t('pcSteps')}</div>`;
+}
+async function exportar(from, full) {
+  const grupos = M.groups.map(g => {
+    const reg = {}; Object.keys(M.diario[g.id] || {}).sort().forEach(d => { if ((!from || d >= from) && dayHas(g.id, d)) reg[d] = M.diario[g.id][d]; });
+    return { id: g.id, name: g.name, alumnos: g.students.map(s => ({ id: s.id, name: s.name })), registros: reg };
+  }).filter(g => Object.keys(g.registros).length);
+  if (!grupos.length) { toast(t('noRecs')); return; }
+  const now = new Date(), txt = JSON.stringify({ tipo: 'evalcomp-diario', v: 1, origen: 'movil', exportado: now.toISOString(), desde: from, grupos });
+  const name = (full ? 'dia-a-dia_movil_completa_' : 'dia-a-dia_movil_') + isoToday() + '.json';
+  const mark = () => { M.prefs.lastExp = isoToday(); M.prefs.lastExpAt = now.toISOString(); if (M.mod > M.prefs.lastExpAt) M.prefs.lastExpAt = M.mod; save(); render(); };
+  try {
+    const file = new File([txt], name, { type: 'application/json' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: name }); mark(); toast(t('shared')); return; }
+  } catch (e) { if (e && e.name === 'AbortError') return; }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([txt], { type: 'application/json' })); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  mark(); toast(t('downloaded', name));
+}
+
+/* ===== Ajustes ===== */
+function vAjustes() {
+  const nS = M.groups.reduce((a, g) => a + g.students.length, 0);
+  $('main').innerHTML = `<div class="card"><h2>${t('classesT')}</h2>
+  ${M.groups.length ? `<div class="glist">${M.groups.map(g => `<div><span>${esc(g.name)}</span><span class="mut">${t('stud', g.students.length)}</span></div>`).join('')}</div>
+  <p class="mut">${M.loadedAt ? t('loadedOn', new Date(M.loadedAt).toLocaleDateString(t('loc'))) + ' ' : ''}${t('reloadD')}</p>
+  <button class="btn" onclick="$('fimp').click()">${t('reloadBtn')}</button>` : `<p class="mut">${t('noGroups')}</p>${t('howLoad')}<button class="btn" onclick="$('fimp').click()">${t('loadBtn')}</button>`}</div>
+  <div class="card"><h2>${t('langT')}</h2><div style="display:flex;gap:8px"><button class="btn ${L === 'es' ? '' : 'sec'}" onclick="setLang('es')">Castellano</button><button class="btn ${L === 'va' ? '' : 'sec'}" onclick="setLang('va')">Valencià</button></div></div>
+  <div class="card"><h2>${t('install')}</h2><p class="mut">${t('installD')}</p></div>
+  <div class="card"><h2>${t('dataT')}</h2><p class="mut">${t('dataD')}</p>
+  <button class="btn sec" onclick="exportar('',true)">${t('fullBtn')}</button>
+  <button class="btn sec" onclick="$('fimp').click()">${t('restoreBtn')}</button>
+  <button class="btn dang" onclick="wipe()">${t('wipeBtn')}</button></div>
+  <p class="mut" style="text-align:center">${t('ver', VERSION)}${nS ? ' · ' + t('stud', nS) : ''}</p>`;
+}
+function setLang(l) { L = l; M.prefs.lang = l; save(); render(); }
+function wipe() { const w = prompt(t('wipeConf')); if (!w || !/^(BORRAR|ESBORRAR)$/i.test(w.trim())) return; M = empty(); M.prefs.lang = L; U.gid = null; U.undo = []; save(); render(); toast(t('wiped')); }
+
+/* ===== Importar: copia completa del ordenador (clases + horario) o exportación del Día a día ===== */
+function importFile(f) {
+  if (!f) return;
+  const r = new FileReader();
+  r.onload = () => { let o = null; try { o = JSON.parse(r.result); } catch (e) { } importObj(o); };
+  r.readAsText(f);
+}
+const normSt = st => { const o = {}; COLS.forEach(k => { if (st && st[k] && (st[k].p || st[k].n)) o[k] = { p: +st[k].p || 0, n: +st[k].n || 0 }; }); if (st && st.a) o.a = true; if (st && st.o && String(st.o).trim()) o.o = String(st.o).trim(); return o; };
+function importObj(o) {
+  if (o && Array.isArray(o.groups) && Array.isArray(o.instrumentos)) {
+    M.groups = o.groups.map(g => ({ id: g.id, name: g.name || '?', students: (g.students || []).filter(s => s && s.id).map(s => ({ id: s.id, name: s.name || '?' })) }));
+    M.horario = o.horario && Array.isArray(o.horario.slots) ? { slots: o.horario.slots.map(s => ({ id: s.id, label: s.label || '' })), cells: o.horario.cells || {} } : { slots: [], cells: {} };
+    M.loadedAt = new Date().toISOString();
+    if (!grp(U.gid)) U.gid = null; U.undo = [];
+    save(); U.view = 'clase'; render(); toast(t('loaded', M.groups.length, M.groups.reduce((a, g) => a + g.students.length, 0)));
+    return;
+  }
+  if (o && o.tipo === 'evalcomp-diario' && Array.isArray(o.grupos)) {
+    let add = 0, same = 0;
+    o.grupos.forEach(pg => {
+      let g = grp(pg.id);
+      if (!g) { g = { id: pg.id, name: pg.name || '?', students: (pg.alumnos || []).map(a => ({ id: a.id, name: a.name || '?' })) }; M.groups.push(g); }
+      Object.keys(pg.registros || {}).forEach(d => {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return; const rec = ensureDay(g.id, d), src = pg.registros[d] || {};
+        Object.keys(src).forEach(sid => { const v = normSt(src[sid]); if (!Object.keys(v).length) return; if (rec[sid] && Object.keys(rec[sid]).length) { same++; return; } rec[sid] = v; add++; });
+      });
+    });
+    if (!M.loadedAt) M.loadedAt = new Date().toISOString();
+    save(add > 0); render(); toast(t('merged', add, same));
+    return;
+  }
+  toast(t('badFile'));
+}
+
+/* ===== Aviso ===== */
+let tt = null;
+function toast(m) { const e = $('toast'); e.textContent = m; e.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => e.classList.remove('on'), 2600); }
+
+L = (M.prefs && M.prefs.lang) || ((navigator.language || '').toLowerCase().startsWith('ca') ? 'va' : 'es');
+render();
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => { });
+</script>
+</body>
+</html>
