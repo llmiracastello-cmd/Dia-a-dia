@@ -26,6 +26,10 @@ header h1{font-size:18px;margin:0;flex:1}
 .datebar label{flex:1;position:relative;background:rgba(255,255,255,.2);border-radius:10px;height:40px;display:flex;align-items:center;justify-content:center;font-weight:600}
 .datebar label input{position:absolute;inset:0;opacity:0;width:100%;height:100%;padding:0}
 .datebar .today{background:#fff;color:var(--acc2);height:40px;padding:0 10px;border-radius:10px;font-weight:600;font-size:14px}
+.srch{position:relative;margin-top:8px}
+.srch input{border:0;border-radius:10px;padding:10px 40px 10px 12px;background:#fff;color:#1b2428;font-size:16px}
+.srch input::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
+.srch button{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:34px;height:34px;color:#6b7a80;font-size:18px}
 .chips{display:flex;gap:6px;overflow-x:auto;padding:10px 12px 4px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
 .chip{flex:none;padding:8px 12px;border-radius:20px;background:var(--card);border:1px solid var(--bd);font-weight:600;font-size:15px;box-shadow:var(--sh);position:relative}
 .chip small{display:block;font-weight:400;font-size:11px;color:var(--mut)}
@@ -96,7 +100,7 @@ nav button .bd{position:absolute;margin-left:22px;margin-top:-2px;width:9px;heig
 <input type="file" id="fimp" style="position:fixed;left:-9999px;width:1px;height:1px;opacity:0" onchange="importFile(this.files[0]);this.value=''">
 <script>
 'use strict';
-const VERSION = '1.1';
+const VERSION = '1.3';
 const KEY = 'evalcomp_movil_v1';
 const $ = id => document.getElementById(id);
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -108,9 +112,9 @@ const TX = {
     cols: { t: '📚 Trabajo', d: '🏠 Deberes', c: '🙂 Comport.' },
     colsL: { t: '📚 Trabajo en clase', d: '🏠 Deberes', c: '🙂 Comportamiento' },
     noGroupsT: 'Todavía no hay clases', noGroups: 'Carga tus grupos y alumnado desde la app del ordenador.',
-    loadBtn: '📂 Cargar mis clases', howLoad: '<ol><li>En el ordenador abre la app y ve a <b>Datos y ayuda → Descargar copia (.json)</b>.</li><li>Pasa ese archivo al móvil (Drive, OneDrive, correo, WhatsApp…).</li><li>Aquí pulsa <b>Cargar mis clases</b> y elígelo.</li></ol>',
+    loadBtn: '📂 Cargar mis clases', howLoad: '<ol><li>En el ordenador abre la app y ve a <b>Datos y ayuda → Descargar copia (.json)</b>.</li><li>Pasa ese archivo al móvil (Drive, OneDrive, correo, WhatsApp…).</li><li>Aquí pulsa <b>Cargar mis clases</b> y elígelo. También puedes tocar el archivo en WhatsApp o Drive → <b>Compartir</b> → <b>Día a día</b>.</li></ol>',
     todayHas: 'Hoy', others: 'Otros:', attend: 'Asisten {0}', absent: 'faltan {0}', noRec: 'Sin anotaciones este día',
-    undo: '↶ Deshacer', all: '👥 Toda la clase', absTxt: 'Falta de asistencia: ese día no cuenta',
+    undo: '↶ Deshacer', srch: '🔍 Buscar alumno/a…', noMatch: 'Nadie coincide con «{0}»', all: '👥 Toda la clase', absTxt: 'Falta de asistencia: ese día no cuenta',
     hint: 'Toca ＋ o − para anotar. Mantén pulsado para quitar uno. Toca el nombre para más opciones.',
     allT: 'Toda la clase · {0}', allP: '＋ a todos', allN: '− a todos', allR: '↺ Vaciar',
     allNote: '«A todos» solo se pone a quien asiste y aún no tiene nada en esa columna.',
@@ -139,9 +143,9 @@ const TX = {
     cols: { t: '📚 Treball', d: '🏠 Deures', c: '🙂 Comport.' },
     colsL: { t: '📚 Treball en classe', d: '🏠 Deures', c: '🙂 Comportament' },
     noGroupsT: 'Encara no hi ha classes', noGroups: 'Carrega els teus grups i l’alumnat des de l’app de l’ordinador.',
-    loadBtn: '📂 Carregar les meues classes', howLoad: '<ol><li>A l’ordinador obri l’app i ves a <b>Dades i ajuda → Descarregar còpia (.json)</b>.</li><li>Passa eixe arxiu al mòbil (Drive, OneDrive, correu, WhatsApp…).</li><li>Ací prem <b>Carregar les meues classes</b> i tria’l.</li></ol>',
+    loadBtn: '📂 Carregar les meues classes', howLoad: '<ol><li>A l’ordinador obri l’app i ves a <b>Dades i ajuda → Descarregar còpia (.json)</b>.</li><li>Passa eixe arxiu al mòbil (Drive, OneDrive, correu, WhatsApp…).</li><li>Ací prem <b>Carregar les meues classes</b> i tria’l. També pots tocar l’arxiu en WhatsApp o Drive → <b>Compartir</b> → <b>Dia a dia</b>.</li></ol>',
     todayHas: 'Hui', others: 'Altres:', attend: 'Assistixen {0}', absent: 'falten {0}', noRec: 'Sense anotacions este dia',
-    undo: '↶ Desfer', all: '👥 Tota la classe', absTxt: 'Falta d’assistència: eixe dia no compta',
+    undo: '↶ Desfer', srch: '🔍 Cercar alumne/a…', noMatch: 'Ningú no coincideix amb «{0}»', all: '👥 Tota la classe', absTxt: 'Falta d’assistència: eixe dia no compta',
     hint: 'Toca ＋ o − per a anotar. Mantín premut per a llevar-ne un. Toca el nom per a més opcions.',
     allT: 'Tota la classe · {0}', allP: '＋ a tots', allN: '− a tots', allR: '↺ Buidar',
     allNote: '«A tots» només es posa a qui assistix i encara no té res en eixa columna.',
@@ -185,7 +189,7 @@ const lbl = iso => { const d = dOf(iso); return raw('days')[d.getDay()] + ' ' + 
 const lng = iso => dOf(iso).toLocaleDateString(t('loc'), { weekday: 'long', day: 'numeric', month: 'long' });
 const COLS = ['t', 'd', 'c'];
 
-const U = { view: 'clase', date: isoToday(), gid: (M.prefs && M.prefs.gid) || null, undo: [] };
+const U = { view: 'clase', date: isoToday(), gid: (M.prefs && M.prefs.gid) || null, undo: [], q: '' };
 const grp = id => M.groups.find(g => g.id === id);
 const dayRec = (gid, date) => ((M.diario[gid] || {})[date]) || null;
 const stRec = (gid, date, sid) => (dayRec(gid, date) || {})[sid] || {};
@@ -257,7 +261,7 @@ function vClase() {
   }
   pickGroup();
   const isT = U.date === isoToday();
-  $('hdx').innerHTML = `<div class="datebar"><button class="arr" onclick="moveDay(-1)" aria-label="‹">‹</button><label>${esc(lbl(U.date))}<input type="date" value="${U.date}" onclick="try{this.showPicker()}catch(e){}" onchange="setDate(this.value)"></label><button class="arr" onclick="moveDay(1)" aria-label="›">›</button>${isT ? '' : `<button class="today" onclick="setDate(isoToday())">${t('today')}</button>`}</div>`;
+  $('hdx').innerHTML = `<div class="datebar"><button class="arr" onclick="moveDay(-1)" aria-label="‹">‹</button><label>${esc(lbl(U.date))}<input type="date" value="${U.date}" onclick="try{this.showPicker()}catch(e){}" onchange="setDate(this.value)"></label><button class="arr" onclick="moveDay(1)" aria-label="›">›</button>${isT ? '' : `<button class="today" onclick="setDate(isoToday())">${t('today')}</button>`}</div>${grp(U.gid) && grp(U.gid).students.length > 1 ? `<div class="srch"><input type="search" id="q" enterkeyhint="search" autocomplete="off" placeholder="${esc(t('srch'))}" value="${esc(U.q)}" oninput="filt(this.value)"><button onclick="filt('');$('q').value=''" aria-label="✕" ${U.q ? '' : 'hidden'}>✕</button></div>` : ''}`;
   const tg = groupsOn(U.date), tids = tg.map(x => x.g.id), rest = M.groups.filter(g => !tids.includes(g.id));
   const chip = (g, sub) => `<button class="chip ${g.id === U.gid ? 'on' : ''}" onclick="setGroup('${g.id}')">${dayHas(g.id, U.date) ? '<i class="dot"></i>' : ''}${esc(g.name)}${sub ? `<small>${esc(sub)}</small>` : ''}</button>`;
   $('chips').innerHTML = `<div class="chips">${tg.map(x => chip(x.g, x.s.join(', '))).join('')}${tg.length && rest.length ? `<span class="chip sep">${t('others')}</span>` : ''}${rest.map(g => chip(g)).join('')}</div>`;
@@ -267,15 +271,23 @@ function vClase() {
   $('main').innerHTML = `${days >= 7 ? `<div class="warn">⚠ ${t('pendWarn', days)} <a href="#" onclick="go('enviar');return false">${t('pendGo')}</a></div>` : ''}
   <div class="tools"><span class="sum">${esc(lng(U.date))}<br>${g.students.length ? t('attend', g.students.length - nAbs) + (nAbs ? ' · ' + t('absent', nAbs) : '') : ''}</span>
   <button class="tb" onclick="undo()" ${U.undo.length ? '' : 'disabled'}>${t('undo')}</button><button class="tb" onclick="allSheet()" ${g.students.length ? '' : 'disabled'}>${t('all')}</button></div>
-  <div id="list">${g.students.length ? g.students.map(s => rowHTML(g, s)).join('') : `<p class="mut">${t('noStu')}</p>`}</div>
+  <div id="list">${g.students.length ? g.students.map(s => rowHTML(g, s)).join('') : `<p class="mut">${t('noStu')}</p>`}</div><p class="mut" id="nomatch" style="text-align:center;${U.q && !g.students.some(s => match(s)) ? '' : 'display:none'}">${esc(t('noMatch', U.q))}</p>
   <p class="mut" style="text-align:center;margin:14px 8px">${t('hint')}</p>`;
 }
 const dayHas = (gid, date) => { const r = dayRec(gid, date); return !!r && Object.keys(r).length > 0; };
 function rowHTML(g, s) {
   const st = stRec(g.id, U.date, s.id);
-  return `<div class="stu ${st.a ? 'abs' : ''}" id="r-${s.id}"><div class="top"><button class="nm" onclick="detail('${s.id}')">${esc(s.name)}${st.o ? `<span class="nt">📝 ${esc(st.o)}</span>` : ''}</button><button class="ab ${st.a ? 'on' : ''}" onclick="toggleAbs('${s.id}')" aria-label="${esc(t('absent1'))}">🚫</button></div>
+  return `<div class="stu ${st.a ? 'abs' : ''}" id="r-${s.id}"${match(s) ? '' : ' style="display:none"'}><div class="top"><button class="nm" onclick="detail('${s.id}')">${esc(s.name)}${st.o ? `<span class="nt">📝 ${esc(st.o)}</span>` : ''}</button><button class="ab ${st.a ? 'on' : ''}" onclick="toggleAbs('${s.id}')" aria-label="${esc(t('absent1'))}">🚫</button></div>
   <div class="abtxt">${t('absTxt')}</div>
   <div class="cols">${COLS.map(k => { const c = st[k] || {}; return `<div class="col"><span class="lb">${raw('cols')[k]}</span><div class="bs"><button class="b p ${c.p ? 'has' : ''}" data-s="${s.id}" data-c="${k}" data-k="p">＋${c.p ? `<b>${c.p}</b>` : ''}</button><button class="b n ${c.n ? 'has' : ''}" data-s="${s.id}" data-c="${k}" data-k="n">−${c.n ? `<b>${c.n}</b>` : ''}</button></div></div>`; }).join('')}</div></div>`;
+}
+const norm = x => String(x || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const match = s => { const q = norm(U.q).trim(); if (!q) return true; const n = norm(s.name); return q.split(/\s+/).every(w => n.includes(w)); };
+function filt(v) {
+  U.q = v || ''; const g = grp(U.gid); if (!g) return; let any = false;
+  g.students.forEach(s => { const el = $('r-' + s.id), m = match(s); if (m) any = true; if (el) el.style.display = m ? '' : 'none'; });
+  const nm = $('nomatch'); if (nm) { nm.textContent = t('noMatch', U.q); nm.style.display = U.q && !any ? '' : 'none'; }
+  const x = document.querySelector('.srch button'); if (x) x.hidden = !U.q;
 }
 function refresh(sid) {
   if (U.view !== 'clase') return;
@@ -289,7 +301,7 @@ function refresh(sid) {
 }
 function setDate(d) { if (!/^\d{4}-\d{2}-\d{2}$/.test(d || '')) return; const tg = groupsOn(d); U.date = d; if (tg.length && !tg.some(x => x.g.id === U.gid)) U.gid = tg[0].g.id; render(); }
 function moveDay(n) { setDate(addDays(U.date, n)); }
-function setGroup(id) { U.gid = id; M.prefs.gid = id; save(); render(); }
+function setGroup(id) { U.gid = id; U.q = ''; M.prefs.gid = id; save(); render(); }
 
 /* Pulsación: toque = sumar; mantener pulsado = quitar uno */
 (function () {
@@ -420,6 +432,12 @@ function toast(m) { const e = $('toast'); e.textContent = m; e.classList.add('on
 
 L = (M.prefs && M.prefs.lang) || ((navigator.language || '').toLowerCase().startsWith('ca') ? 'va' : 'es');
 render();
+/* Archivo llegado por «Compartir» */
+(async () => {
+  if (!/[?&]compartido=1/.test(location.search) || !('caches' in window)) return;
+  history.replaceState(null, '', location.pathname);
+  try { const c = await caches.open('diaadia-compartido'), r = await c.match('./compartido.json'); if (!r) return; const txt = await r.text(); await c.delete('./compartido.json'); let o = null; try { o = JSON.parse(txt); } catch (e) { } importObj(o); } catch (e) { }
+})();
 if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(() => { });
 </script>
 </body>
